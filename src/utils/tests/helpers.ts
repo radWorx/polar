@@ -30,7 +30,7 @@ export const suppressConsoleErrors = async (func: () => any | Promise<any>) => {
   const oldConsoleErr = console.error;
   console.error = () => {};
   const result = func();
-  if (typeof result.then === 'function') {
+  if (result && typeof result.then === 'function') {
     await result;
   }
   console.error = oldConsoleErr;
