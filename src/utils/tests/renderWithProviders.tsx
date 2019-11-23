@@ -4,28 +4,9 @@ import { render } from '@testing-library/react';
 import { ConnectedRouter } from 'connected-react-router';
 import { StoreProvider } from 'easy-peasy';
 import { createMemoryHistory } from 'history';
-import { Status } from 'shared/types';
 import { createReduxStore } from 'store';
-import { Network, StoreInjections } from 'types';
-import { createNetwork } from './network';
+import { StoreInjections } from 'types';
 
-export const getNetwork = (networkId = 1, name?: string, status?: Status): Network =>
-  createNetwork({
-    id: networkId,
-    name: name || 'my-test',
-    lndNodes: 2,
-    clightningNodes: 0,
-    bitcoindNodes: 1,
-    status,
-  });
-
-export const mockProperty = <T extends {}, K extends keyof T>(
-  object: T,
-  property: K,
-  value: T[K],
-) => {
-  Object.defineProperty(object, property, { get: () => value });
-};
 // injections allow you to mock the dependencies of redux store actions
 export const injections: StoreInjections = {
   ipc: jest.fn(),
@@ -91,20 +72,4 @@ export const renderWithProviders = (
   );
 
   return { ...result, history, injections, store };
-};
-
-/**
- * Suppresses console errors when executing some code.
- * For example: antd Modal.confirm logs a console error when onOk fails
- * this supresses those errors from being displayed in test runs
- * @param func the code to run
- */
-export const suppressConsoleErrors = async (func: () => any | Promise<any>) => {
-  const oldConsoleErr = console.error;
-  console.error = () => {};
-  const result = func();
-  if (typeof result.then === 'function') {
-    await result;
-  }
-  console.error = oldConsoleErr;
 };
